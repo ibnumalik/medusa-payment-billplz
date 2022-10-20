@@ -1,21 +1,15 @@
 import { PaymentService } from "medusa-interfaces"
+import Billplz from "../billplz"
 import { log } from "../utils/log"
 
-const baseUrl = "https://www.billplz.com/api"
-const sandboxBaseUrl = "https://www.billplz-sandbox.com/api"
 // const log = console.log
 
 class BillplzPaymentService extends PaymentService {
   static identifier = "billplz"
 
-  /** Indicates whether the operation will be in sandbox mode. */
-  sandbox = false
-
-  constructor(container, options) {
+  constructor(_, options) {
     super()
-    this.sandbox = !options.production
-    this.apiUrl = this.sandbox ? sandboxBaseUrl : baseUrl
-    this.apiKey = options.api_key
+    this.BillPlz = new Billplz(options)
   }
 
   /**
@@ -35,8 +29,21 @@ class BillplzPaymentService extends PaymentService {
    * @returns {object} an object with staus
    */
   async createPayment(cart) {
-    log("createPayment", ...args)
-    return { status: "pending" }
+    try {
+      log("try createPayment")
+      const { email, customer, total, id } = cart
+      const payment = await this.BillPlz.create_bill({
+        email,
+        name: `${customer.first_name} ${customer.last_name}`,
+        amount: total,
+        callback_url: "http://localhost:8000/billplz/callback",
+        description: id,
+      })
+      log("createPayment", payment)
+      return { status: "pending", ...payment }
+    } catch (error) {
+      log("error", JSON.stringify(error, Object.getOwnPropertyNames(error)))
+    }
   }
 
   /**
@@ -59,7 +66,7 @@ class BillplzPaymentService extends PaymentService {
    * @returns {Promise<{ status: string, data: object }>} result with data and status
    */
   async authorizePayment() {
-    const t = 't'
+    const t = "t"
     log("authorizedPayment", t)
     return { status: "authorized", data: { status: "authorized" } }
   }
@@ -69,9 +76,14 @@ class BillplzPaymentService extends PaymentService {
    * @param {object} sessionData - payment session data.
    * @returns {object} same data
    */
-  async updatePayment(sessionData) {
+  async updatePayment(sessionData, cart) {
     log("updatePayment", sessionData)
-    return sessionData.data
+
+    if (cart.total && sessionData.amount === Math.round(cart.total)) {
+      return sessionData
+    }
+
+    return this.createPayment(cart)
   }
 
   /**
@@ -85,9 +97,10 @@ class BillplzPaymentService extends PaymentService {
     return { ...sessionData.data, ...update.data }
   }
 
-  async deletePayment() {
-    log("deletePayment")
-    return
+  async deletePayment(paymentSession) {
+    const { id } = paymentSession
+    log("deletePayment", id)
+    return this.BillPlz.delete_bill(id)
   }
 
   /**
