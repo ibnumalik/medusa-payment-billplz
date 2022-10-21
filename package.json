@@ -29,7 +29,8 @@
     "@babel/core": "^7.18.10",
     "@babel/preset-typescript": "^7.14.5",
     "babel-preset-medusa-package": "^1.1.19",
-    "cross-env": "^7.0.3"
+    "cross-env": "^7.0.3",
+    "eslint": "^8.25.0"
   },
   "dependencies": {
     "node-fetch": "^2.6.7"
