@@ -29,12 +29,12 @@ export default class Billplz {
 
   //create collection
   create_collection(params) {
-    return this.post("collections", params)
+    return this.post("v4/collections", params)
   }
 
   //create open collection
   create_collectionOpen(params) {
-    return this.post("open_collections", params)
+    return this.post("v4/open_collections", params)
   }
 
   //create bill
@@ -47,12 +47,12 @@ export default class Billplz {
 
   //get bill
   get_bill(billId) {
-    return this.get(this._apiEndpoint + "bills/" + billId)
+    return this.get("v3/bills/" + billId)
   }
 
   //delete bill
   delete_bill(billId) {
-    return this.fetcher(this._apiEndpoint + "bills/" + billId, {
+    return this.fetcher(this._apiEndpoint + "v3/bills/" + billId, {
       method: "DELETE",
     })
   }
@@ -60,23 +60,25 @@ export default class Billplz {
   //change collection status
   // status = 'activate' | 'deactivate'
   change_collection_status(collectionId, status) {
-    return this.post(
-      this._apiEndpoint + `collections/${collectionId}/${status}`
-    )
+    return this.post(`v3/collections/${collectionId}/${status}`)
   }
 
   //registration check
   registration_check(bankAccountNumber) {
-    return this.get(
-      this._apiEndpoint + "check/bank_account_number/" + bankAccountNumber
-    )
+    return this.get("v3/check/bank_account_number/" + bankAccountNumber)
   }
 
   // Get payment gateways
-  getPaymentGateways() {}
+  getPaymentGateways() {
+    return this.get("v4/payment_gateways")
+  }
+
+  getFpxBanks() {
+    return this.get("v3/fpx_banks")
+  }
 
   updateOptions(options) {
-    const encodedToken = Buffer.from(this._apiKey).toString("base64")
+    const encodedToken = globalThis.Buffer.from(this._apiKey).toString("base64")
 
     return {
       ...options,
