@@ -1,5 +1,6 @@
 import { PaymentService } from "medusa-interfaces"
 import Billplz from "../billplz"
+import fpxAllowlist from "../utils/fpx-allowlist"
 import { log } from "../utils/log"
 
 // const log = console.log
@@ -140,6 +141,27 @@ class BillplzPaymentService extends PaymentService {
   async cancelPayment() {
     log("cancelPayment")
     return { status: "canceled" }
+  }
+
+  async getPaymentGateways() {
+    return this.BillPlz.getPaymentGateways()
+  }
+
+  async getFpxBanks() {
+    const { banks } = await this.BillPlz.getFpxBanks()
+
+    return this.getAllowedFpx(banks)
+  }
+
+  getAllowedFpx(banks) {
+    log(banks)
+    return Object.keys(fpxAllowlist).map((fpxKey) => {
+      const bank = banks.find((b) => b.name === fpxKey)
+      return {
+        ...bank,
+        ...fpxAllowlist[fpxKey],
+      }
+    })
   }
 }
 
