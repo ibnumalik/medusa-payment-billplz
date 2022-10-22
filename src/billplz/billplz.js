@@ -2,7 +2,7 @@
  *
  */
 import fetch from "node-fetch"
-import { log } from "./utils/log"
+import { log } from "../utils/log"
 
 const baseUrl = "https://www.billplz.com/api/"
 const sandboxBaseUrl = "https://www.billplz-sandbox.com/api/"

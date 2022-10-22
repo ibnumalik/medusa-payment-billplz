@@ -80,3 +80,4 @@ const plugins = [
 ## TODO
 
 - [ ] Add instruction to use in NextJS storefront starter.
+- [ ] Add library to provide components and hooks to use this plugins.
