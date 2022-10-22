@@ -1,8 +1,8 @@
-## Billplz payment provider for Medusa commerce
+# Billplz payment provider for Medusa commerce
 
 ![Billplz medusa hackathon cover](/assets/cover.jpg?raw=true "Medusa hackathon - Billplz payment provider")
 
-### Demo Link
+## Demo Link
 
 [Demo page - With NextJS starter](https://mh-billplz.shaiful.my)
 
