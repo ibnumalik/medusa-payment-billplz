@@ -1,6 +1,6 @@
 {
   "name": "medusa-payment-billplz",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Billplz payment provider for Medusa commerce",
   "author": "Shaiful Aiman bin Malik <ibnumalikmy@gmail.com>",
   "license": "MIT",
