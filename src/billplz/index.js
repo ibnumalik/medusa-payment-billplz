@@ -1,1 +1,3 @@
-export * as default from "./billplz"
+import Billplz from "./billplz"
+
+export default Billplz
