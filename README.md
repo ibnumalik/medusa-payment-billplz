@@ -82,6 +82,7 @@ const plugins = [
 - [Medusa - Create plugin](https://docs.medusajs.com/advanced/backend/plugins/create)
 - [Medusa - How to install plugin](https://docs.medusajs.com/advanced/backend/plugins/overview/#how-to-install-a-plugin)
 - [Billplz developer documentation](https://billplz.com/api)
+- [Store example using this plugin](https://github.com/ibnumalik/medusa-billplz)
 
 ## TODO
 
