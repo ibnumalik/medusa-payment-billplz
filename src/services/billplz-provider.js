@@ -71,7 +71,7 @@ class BillplzPaymentService extends PaymentService {
         name: `${customer.first_name} ${customer.last_name}`,
         amount: total,
         callback_url: `${this.backendUrl}/billplz/callback`,
-        redirect_url: `${this.storeUrl}/billplz/redirect`,
+        redirect_url: `${this.storeUrl}/checkout`,
         description: `cart_id:${id},idempotency_key:${id}`,
         reference_1_label: "Bank Code",
         reference_1: billplz_ref,
