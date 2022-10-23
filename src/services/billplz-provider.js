@@ -10,6 +10,8 @@ class BillplzPaymentService extends PaymentService {
 
   constructor(_, options) {
     super()
+    this.storeUrl = options.store_url
+    this.backendUrl = options.backend_url
     this.BillPlz = new Billplz(options)
   }
 
@@ -25,26 +27,11 @@ class BillplzPaymentService extends PaymentService {
   }
 
   /**
-   * Creates a manual payment with status "pending"
-   * @param {object} cart - cart to create a payment for
-   * @returns {object} an object with staus
+   * Not supported
    */
   async createPayment(cart) {
-    try {
-      log("try createPayment")
-      const { email, customer, total, id } = cart
-      const payment = await this.BillPlz.create_bill({
-        email,
-        name: `${customer.first_name} ${customer.last_name}`,
-        amount: total,
-        callback_url: "http://localhost:8000/billplz/callback",
-        description: id,
-      })
-      log("createPayment", payment)
-      return { status: "pending", ...payment }
-    } catch (error) {
-      log("error", JSON.stringify(error, Object.getOwnPropertyNames(error)))
-    }
+    log("createPayment", cart)
+    return { status: "pending" }
   }
 
   /**
@@ -63,39 +50,63 @@ class BillplzPaymentService extends PaymentService {
   }
 
   /**
-   * Updates the payment status to authorized
-   * @returns {Promise<{ status: string, data: object }>} result with data and status
+   * Create bills in Billplz
    */
-  async authorizePayment() {
-    const t = "t"
-    log("authorizedPayment", t)
-    return { status: "authorized", data: { status: "authorized" } }
+  async authorizePayment(paymentSession, context) {
+    log("authorizedPayment", { paymentSession, context })
+
+    try {
+      const { data } = paymentSession
+      const { email, customer, total, id, billplz_ref } = data
+
+      if (!billplz_ref) {
+        return {
+          status: "requires_more",
+          data: { status: "requires_more", ...paymentSession },
+        }
+      }
+
+      const bill = await this.BillPlz.create_bill({
+        email,
+        name: `${customer.first_name} ${customer.last_name}`,
+        amount: total,
+        callback_url: `${this.backendUrl}/billplz/callback`,
+        redirect_url: `${this.storeUrl}/billplz/redirect`,
+        description: `cart_id:${id},idempotency_key:${id}`,
+        reference_1_label: "Bank Code",
+        reference_1: billplz_ref,
+      })
+      log("createPayment", bill)
+
+      return {
+        status: "requires_more",
+        data: { ...data, ...bill, status: "requires_more" },
+      }
+    } catch (error) {
+      log("error", JSON.stringify(error, Object.getOwnPropertyNames(error)))
+    }
   }
 
   /**
-   * Noop, simply returns existing data.
-   * @param {object} sessionData - payment session data.
-   * @returns {object} same data
+   * Create payment based on user bank selection.
    */
   async updatePayment(sessionData, cart) {
-    log("updatePayment", sessionData)
+    const { email, customer, total, id } = cart
 
-    if (cart.total && sessionData.amount === Math.round(cart.total)) {
-      return sessionData
-    }
+    const combined = { ...sessionData, email, customer, total, id }
+    log("updatePayment", { sessionData, cart, combined })
 
-    return this.createPayment(cart)
+    return combined
   }
 
   /**
-   .
    * @param {object} sessionData - payment session data.
    * @param {object} update - payment session update data.
    * @returns {object} existing data merged with update data
    */
   async updatePaymentData(sessionData, update) {
-    log("updatePaymentData", { sessionData, update })
-    return { ...sessionData.data, ...update.data }
+    log("updatePaymentData", sessionData, update)
+    return { ...sessionData, ...update }
   }
 
   async deletePayment(paymentSession) {

@@ -45,11 +45,15 @@ npm install medusa-payment-billplz
 BILLPLZ_COLLECTION_ID=<COLLECTION_ID>
 BILLPLZ_API_KEY=<SECRET_KEY>
 BILLPLZ_X_SIGNATURE_KEY=<XSIGNATURE_KEY>
+STORE_URL=<STORE_URL>
+BACKEND_URL=<BACKEND_URL>
 BILLPLZ_SANDBOX=true
 ```
 
 - `COLLECTION_ID` can be retrieved in Billplz billing page.
 - `SECRET_KEY` and `BILLPLZ_X_SIGNATURE_KEY` is available in your account settings.
+- `STORE_URL` is the store frontend url
+- `BACKEND_URL` is medusa backend url
 
 During development it’s highly recommended to set `BILLPLZ_SANDBOX` to true and ensure you have [sandbox accounts set up in Billplz](https://www.billplz-sandbox.com/).
 
@@ -65,6 +69,8 @@ const plugins = [
       x_signature_key: BILLPLZ_X_SIGNATURE_KEY,
       collection_id: BILLPLZ_COLLECTION_ID,
       production: !BILLPLZ_SANDBOX || false,
+      store_url: STORE_URL,
+      backend_url: BACKEND_URL
     }
   }
 ];
