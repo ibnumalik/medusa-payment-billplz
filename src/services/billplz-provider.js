@@ -57,12 +57,19 @@ class BillplzPaymentService extends PaymentService {
 
     try {
       const { data } = paymentSession
-      const { email, customer, total, id, billplz_ref } = data
+      const { email, customer, total, id, billplz_ref, status } = data
 
       if (!billplz_ref) {
         return {
           status: "requires_more",
-          data: { status: "requires_more", ...paymentSession },
+          data: { ...paymentSession, status: "requires_more" },
+        }
+      }
+
+      if (status === "authorized") {
+        return {
+          status: "authorized",
+          data: { ...paymentSession, status: "authorized" },
         }
       }
 
@@ -106,7 +113,17 @@ class BillplzPaymentService extends PaymentService {
    */
   async updatePaymentData(sessionData, update) {
     log("updatePaymentData", sessionData, update)
-    return { ...sessionData, ...update }
+    // calculate x_signature to verify its not forged.
+    try {
+      if (update?.billplz_response?.["billplz[paid]"] === "true") {
+        update.status = "authorized"
+      }
+
+      return { ...sessionData, ...update }
+    } catch (error) {
+      log("error", JSON.stringify(error, Object.getOwnPropertyNames(error)))
+      console.error(error)
+    }
   }
 
   async deletePayment(paymentSession) {
