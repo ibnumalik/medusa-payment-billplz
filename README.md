@@ -6,6 +6,13 @@
 
 [Demo page - With NextJS starter](https://mh-billplz.shaiful.my)
 
+### Demo login
+
+u: 7yjyu97u@duck.com
+p: 3PUdM59az6fpQtz
+
+### NPM package link
+
 [NPM - Billplz payment hackathon](https://www.npmjs.com/package/medusa-payment-billplz)
 
 ## About
