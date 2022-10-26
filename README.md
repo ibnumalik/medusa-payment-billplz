@@ -6,6 +6,10 @@
 
 [Demo page - With NextJS starter](https://mh-billplz.shaiful.my)
 
+## Demo video
+
+[medusa-payment-billplz.webm](https://user-images.githubusercontent.com/1806269/198047641-861385c1-3c12-438e-a7fc-bc1e2398e97e.webm)
+
 ### Demo login
 
 u: 7yjyu97u@duck.com
